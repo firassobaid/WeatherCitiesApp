@@ -9,7 +9,9 @@ import android.view.ViewGroup
 import com.fo.weathercities.data.model.City
 import com.fo.weathercities.databinding.FragmentCityDetailsBinding
 import com.fo.weathercities.presentation.presenter.CityDetailsPresenter
+import com.fo.weathercities.presentation.view.`interface`.BackPressInterface
 import com.fo.weathercities.presentation.view.`interface`.CityDetailsView
+import com.fo.weathercities.presentation.view.intent.BackIntent
 import com.fo.weathercities.presentation.view.intent.ConvertInit
 import com.fo.weathercities.presentation.view.intent.DetailsInit
 import com.fo.weathercities.presentation.view.viewstate.CityDetailsViewState
@@ -21,7 +23,7 @@ import io.reactivex.Observable
 const val ARG_PARAM = "city"
 
 class CityDetailsFragment : MviFragment<CityDetailsView, CityDetailsPresenter>(),
-    CityDetailsView {
+    CityDetailsView, BackPressInterface {
 
     private var presenter = CityDetailsPresenter()
     private lateinit var binding: FragmentCityDetailsBinding
@@ -39,8 +41,11 @@ class CityDetailsFragment : MviFragment<CityDetailsView, CityDetailsPresenter>()
 
     override fun createPresenter(): CityDetailsPresenter = presenter
     override fun init(): Observable<DetailsInit> = Observable.just(DetailsInit(city = city))
+
     override fun convert(): Observable<ConvertInit> =
         RxJavaBridge.toV2Observable(binding.cityDetailsFragmentConvert.clicks()).map { ConvertInit }
+
+    override fun back(): Observable<BackIntent> = Observable.just(BackIntent);//binding.//Observable.just(BackIntent)
 
     companion object {
         fun newInstance(city: City): CityDetailsFragment {
@@ -83,5 +88,9 @@ class CityDetailsFragment : MviFragment<CityDetailsView, CityDetailsPresenter>()
         binding.cityDetailsFragmentErrorState.visibility = VISIBLE
     } else {
         binding.cityDetailsFragmentErrorState.visibility = GONE
+    }
+
+    override fun onBackPressed(): Boolean {
+        return true
     }
 }

@@ -5,3 +5,4 @@ import com.fo.weathercities.data.model.City
 sealed class CityDetailsIntent
 data class DetailsInit(val city: City) : CityDetailsIntent()
 object ConvertInit : CityDetailsIntent()
+object BackIntent : CityDetailsIntent()

@@ -12,4 +12,9 @@ data class City(
     val temperature: String? = null,
     val lowTemperature: String? = null,
     val highTemperature: String? = null
-) : Parcelable
+) : Parcelable{
+    
+    companion object {
+        val FAKE_CITY = City("", "")
+    }
+}

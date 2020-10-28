@@ -33,19 +33,28 @@ class CitiesPresenter : MviBasePresenter<CitiesView, CitiesViewState>() {
 
 
         val cityClick: Observable<CityClickMutation> = intent { it.cityClick() }
-            .map { CityClickMutation(it.city) }
+            .map {
+                CityClickMutation(
+                    if (it.city == City.FAKE_CITY) {
+                        null
+                    } else {
+                        it.city
+                    }
+                )
+
+            }
 
         val state =
             Observable.merge(init, cityClick)
                 .scan<CitiesViewState>(CitiesViewState(loading = true), this::reduce)
                 .observeOn(AndroidSchedulers.mainThread())
-                .distinctUntilChanged()
                 .subscribeOn(Schedulers.io())
 
         subscribeViewState(state, CitiesView::render)
     }
 
     private fun reduce(oldState: CitiesViewState, mutation: CitiesMutation): CitiesViewState {
+        Log.i(TAG, "Cities presenter mutation: $mutation")
         return when (mutation) {
             is CitiesInitMutation -> oldState.copy(loading = false, cities = mutation.cities)
             is CityClickMutation -> oldState.copy(cityClicked = mutation.city)

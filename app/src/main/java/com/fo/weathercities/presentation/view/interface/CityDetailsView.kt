@@ -1,5 +1,6 @@
 package com.fo.weathercities.presentation.view.`interface`
 
+import com.fo.weathercities.presentation.view.intent.BackIntent
 import com.fo.weathercities.presentation.view.intent.ConvertInit
 import com.fo.weathercities.presentation.view.intent.DetailsInit
 import com.fo.weathercities.presentation.view.viewstate.CityDetailsViewState
@@ -9,5 +10,6 @@ import io.reactivex.Observable
 interface CityDetailsView : MvpView {
     fun init(): Observable<DetailsInit>
     fun convert(): Observable<ConvertInit>
+    fun back(): Observable<BackIntent>
     fun render(viewState: CityDetailsViewState)
 }

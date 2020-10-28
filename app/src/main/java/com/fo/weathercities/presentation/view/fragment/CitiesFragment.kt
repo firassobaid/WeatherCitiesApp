@@ -32,6 +32,7 @@ class CitiesFragment : MviFragment<CitiesView, CitiesPresenter>(), CitiesView {
     private lateinit var binding: CitiesFragmentBinding
     private lateinit var citiesRecycler: RecyclerView
     private lateinit var adapter: GroupAdapter<GroupieViewHolder>
+    private lateinit var toDetailsCallback: ToDetailsInterface
     private var presenter: CitiesPresenter = CitiesPresenter()
     private val cityClick = PublishSubject.create<City>()
 
@@ -49,6 +50,11 @@ class CitiesFragment : MviFragment<CitiesView, CitiesPresenter>(), CitiesView {
         setupRecycler()
     }
 
+    override fun onPause() {
+        cityClick.onNext(City.FAKE_CITY)
+        super.onPause()
+    }
+
     override fun createPresenter(): CitiesPresenter = presenter
 
     private object HOLDER {
@@ -58,11 +64,6 @@ class CitiesFragment : MviFragment<CitiesView, CitiesPresenter>(), CitiesView {
     companion object {
         val instance: CitiesFragment by lazy { HOLDER.INSTANCE }
     }
-//    public fun newInstance(bundle: Bundle): CitiesFragment {
-//        val fragment = CitiesFragment()
-//        fragment.arguments = bundle
-//        return fragment
-//    }
 
     private fun setupRecycler() {
         citiesRecycler = citiesList
@@ -94,7 +95,9 @@ class CitiesFragment : MviFragment<CitiesView, CitiesPresenter>(), CitiesView {
         Log.i(TAG, "View state - $viewState")
         setData(viewState.cities.toGroupieItems(cityClick))
         isLoading(viewState.loading)
-        goToDetails(viewState.cityClicked)
+        viewState.cityClicked?.let {
+            toDetailsCallback.onDetailsPressed(city = viewState.cityClicked)
+        }
     }
 
     private fun setData(cities: List<Item>) {
@@ -118,16 +121,13 @@ class CitiesFragment : MviFragment<CitiesView, CitiesPresenter>(), CitiesView {
         }
     }
 
-    private fun goToDetails(city: City?) {
-        city?.let {
-            activity?.supportFragmentManager?.apply {
-                beginTransaction()
-                    .replace(R.id.fragment_container, CityDetailsFragment.newInstance(city))
-                    .addToBackStack(TAG)
-                    .commit()
-            }
-        }
+    fun setToDetailsListener(callback: ToDetailsInterface) {
+        this.toDetailsCallback = callback
     }
+}
+
+interface ToDetailsInterface {
+    fun onDetailsPressed(city: City)
 }
 
 private fun List<City>.toGroupieItems(cityClickSubject: PublishSubject<City>): List<Item> =
