@@ -6,6 +6,7 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
+import coil.load
 import com.fo.weathercities.data.model.City
 import com.fo.weathercities.databinding.FragmentCityDetailsBinding
 import com.fo.weathercities.presentation.presenter.CityDetailsPresenter
@@ -19,6 +20,7 @@ import com.hannesdorfmann.mosby3.mvi.MviFragment
 import com.jakewharton.rxbinding4.view.clicks
 import hu.akarnokd.rxjava3.bridge.RxJavaBridge
 import io.reactivex.Observable
+import kotlinx.android.synthetic.main.fragment_city_details.*
 
 const val ARG_PARAM = "city"
 
@@ -72,15 +74,15 @@ class CityDetailsFragment : MviFragment<CityDetailsView, CityDetailsPresenter>()
     private fun setData(city: City?) {
         city?.let {
             binding.apply {
-                val today = "Today ${city.lowTemperature} - ${city.highTemperature}"
-                val currentTemp = "Currently ${city.temperature}"
+                val today = "Today ${city.lowTemperature}º - ${city.highTemperature}º"
+                val currentTemp = "Currently ${city.temperature}º"
                 cityDetailsFragmentLayout.visibility = VISIBLE
                 cityDetailsFragmentName.text = city.city
                 cityDetailsFragmentDegree.text = currentTemp
                 cityDetailsFragmentSky.text = city.weatherDescription
                 cityDetailsFragmentToday.text = today
+                city_details_fragment_icon.load("http://openweathermap.org/img/wn/${city.weatherIcon}.png")
             }
-
         }
     }
 

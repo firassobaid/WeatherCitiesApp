@@ -76,9 +76,9 @@ class CityDetailsPresenter : MviBasePresenter<CityDetailsView, CityDetailsViewSt
             City(
                 weatherDescription = apiWeather.weather.first().description,
                 weatherIcon = apiWeather.weather.first().icon,
-                temperature = apiWeather.main?.temp,
-                lowTemperature = apiWeather.main?.temp_min,
-                highTemperature = apiWeather.main?.temp_max,
+                temperature = apiWeather.main?.temp?.substringBefore("."),
+                lowTemperature = apiWeather.main?.temp_min?.substringBefore("."),
+                highTemperature = apiWeather.main?.temp_max?.substringBefore("."),
                 id = oldCity.id,
                 city = oldCity.city
             )
@@ -115,6 +115,4 @@ class CityDetailsPresenter : MviBasePresenter<CityDetailsView, CityDetailsViewSt
 
     private fun convertFahrenheitToCelsius(temp: String?): String =
         ((temp?.toDouble() ?: 0.0 * 5 / 9) - 32).toInt().toString()
-
-
 }
